@@ -6,7 +6,7 @@ datasets
 numpy
 opencv-python-headless
 matplotlib
-gradio>=4
+gradio>=6.31.0
 langgraph
 fastapi
 uvicorn
