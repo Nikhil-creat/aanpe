@@ -145,6 +145,11 @@ footer a{color:#fff;text-decoration:none;margin-right:16px}footer a:hover{text-d
 <section class="px stack" id="deploy"><div><div class="badge">Deploy</div><h2 style="font-size:clamp(34px,5vw,52px)">Edge-ready container.</h2></div>
 <div class="card pad"><p>Multi-stage Docker build on the PyTorch 2.3 CUDA 12.1 runtime, non-root <code>roveruser</code>, Gradio on port 7860.</p><p style="margin-top:10px"><code>docker build -t aanpe . &amp;&amp; docker run --gpus all -p 7860:7860 aanpe</code></p></div>
 <div class="card pad"><h3>FAQ</h3><details><summary>Why halt instead of guessing?</summary><p>A wrong drive on sand can end a mission. Uncertain pixels become Restricted Hazard.</p></details><details style="margin-top:8px"><summary>Does the site run the model?</summary><p>No. The site is static; the model runs from the Python engine. The chatbot only talks to Groq or Gemini.</p></details></div></section>
+<section class="px stack" id="roadmap"><div><div class="badge">Roadmap</div><h2 style="font-size:clamp(34px,5vw,52px)">What ships next.</h2></div>
+<div class="grid"><div class="card pad"><h3>1. Train and benchmark</h3><p>Run training on a GPU, publish mIoU on test_min1 and test_min3 against the all-soil baseline.</p></div>
+<div class="card pad"><h3>2. Edge export</h3><p><code>engine/export_onnx.py</code> exports the model to ONNX, ready for ONNX Runtime or TensorRT.</p></div>
+<div class="card pad"><h3>3. Edge latency</h3><p>Measure real latency on target hardware against the 150 ms fail-safe budget.</p></div>
+<div class="card pad"><h3>4. Model variants</h3><p>Compare SegFormer and Swin encoders with the ConvNeXt DeepLabV3+ baseline.</p></div></div></section>
 <section class="px stack" id="hire"><div><div class="badge">Contact</div><h2 style="font-size:clamp(34px,5vw,52px)">Work with Nikhil.</h2></div>
 <form class="card pad" style="display:grid;gap:10px;max-width:520px" onsubmit="event.preventDefault();location.href='mailto:sriramojunikhil66@gmail.com?subject='+encodeURIComponent('AANPE enquiry from '+n.value)+'&body='+encodeURIComponent(m.value)"><input id="n" required placeholder="Your name" style="background:#ffffff14;border:1px solid var(--b);border-radius:8px;color:#fff;padding:10px;font:inherit"><textarea id="m" required rows="4" placeholder="Message" style="background:#ffffff14;border:1px solid var(--b);border-radius:8px;color:#fff;padding:10px;font:inherit"></textarea><button class="btn pri" style="justify-self:start">Send by email</button></form></section>
 </main>
@@ -174,17 +179,29 @@ function size(){const d=Math.min(devicePixelRatio||1,2);cv.width=innerWidth*d;cv
 addEventListener('resize',size);size();
 addEventListener('scroll',()=>tgt=prog(),{passive:true});
 function draw(b){const W=cv.width,H=cv.height,k=Math.max(W/b.width,H/b.height),w=b.width*k,h=b.height*k;cx.drawImage(b,(W-w)/2,(H-h)/2,w,h)}
+const el=id=>document.getElementById(id);
+let busy=false,N=1,have=0,started=false;const l0=localStorage.getItem('lite');
+let lite=l0==='1'||(l0===null&&((navigator.connection||{}).saveData||matchMedia('(prefers-reduced-motion:reduce)').matches));
+const bar=document.createElement('div');bar.style.cssText='position:fixed;left:12px;bottom:12px;z-index:70;display:flex;gap:8px;align-items:center;font-size:11px;color:#fffc';
+bar.innerHTML='<button id="lb" class="btn sec" style="padding:5px 12px;font-size:11px"></button><span id="fs"></span>';document.body.appendChild(bar);
+el('lb').textContent=lite?'Enable cinematic bg':'Lite mode';
+el('lb').onclick=()=>{localStorage.setItem('lite',lite?'0':'1');location.reload()};
+if(lite){cv.style.display='none';v.style.display='none'}
 async function extract(){
- const o=document.createElement('video');o.muted=true;o.crossOrigin='anonymous';o.playsInline=true;o.preload='auto';o.src=v.src;
- await new Promise(r=>{o.onloadeddata=r;o.load()});
- const mob=innerWidth<700,n=Math.min(mob?48:90,Math.max(24,Math.floor(o.duration*12))),mw=mob?640:960,c=document.createElement('canvas');
- c.width=mw;c.height=Math.round(mw*o.videoHeight/o.videoWidth);const g=c.getContext('2d');
- for(let i=0;i<n;i++){await new Promise(r=>{o.onseeked=r;o.currentTime=i/(n-1)*(o.duration-.05)});g.drawImage(o,0,0,c.width,c.height);fr.push(await createImageBitmap(c))}
- ready=true;cv.style.opacity=1;v.style.opacity=0}
-v.addEventListener('loadeddata',()=>{v.pause();setTimeout(()=>extract().catch(()=>{}),300)});
+ const dur=v.duration;if(!dur||lite||started)return;started=busy=true;
+ const mob=innerWidth<700,n=mob?40:60,mw=mob?800:960,c=document.createElement('canvas');
+ c.width=mw;c.height=Math.round(mw*v.videoHeight/v.videoWidth);const g=c.getContext('2d');N=n;
+ for(let i=0;i<n;i++){
+  await Promise.race([new Promise(r=>{v.onseeked=r;v.currentTime=i/(n-1)*(dur-.05)}),new Promise(r=>setTimeout(r,1500))]);
+  g.drawImage(v,0,0,c.width,c.height);fr[i]=await createImageBitmap(c);have=i+1;
+  if(i===0){cv.style.opacity=1;v.style.opacity=0}
+  el('fs').textContent='Loading frames '+Math.round(100*have/n)+'%'}
+ ready=true;busy=false;el('fs').textContent=''}
+const go=()=>{v.pause();setTimeout(()=>extract().catch(()=>{busy=false;el('fs').textContent=''}),200)};
+v.addEventListener('loadeddata',go);if(v.readyState>=2)go();
 (function loop(){sm+=(tgt-sm)*.12;
- if(ready){const i=Math.round(sm*(fr.length-1));if(i!==last){draw(fr[i]);last=i}}
- else if(v.duration&&!v.seeking){const t=sm*(v.duration-.05);if(Math.abs(v.currentTime-t)>.04)v.currentTime=t}
+ if(have){const i=Math.min(Math.round(sm*(N-1)),have-1);if(i!==last){draw(fr[i]);last=i}}
+ else if(!lite&&!busy&&v.duration&&!v.seeking){const t=sm*(v.duration-.05);if(Math.abs(v.currentTime-t)>.04)v.currentTime=t}
  requestAnimationFrame(loop)})();
 // Safety critic simulator
 const $=id=>document.getElementById(id);
