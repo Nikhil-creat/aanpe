@@ -1,0 +1,6 @@
+.git
+.github
+*.md
+*.pt
+__pycache__
+anomalies

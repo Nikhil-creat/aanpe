@@ -8,3 +8,6 @@ opencv-python-headless
 matplotlib
 gradio>=4
 langgraph
+fastapi
+uvicorn
+python-multipart

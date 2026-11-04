@@ -15,3 +15,5 @@ Docker: docker build -t aanpe . && docker run --gpus all -p 7860:7860 aanpe
 
 ## Chatbot
 Open the site, tap "Rover AI", paste a free Groq or Gemini key (console.groq.com / aistudio.google.com).
+
+Compose: docker compose up (dashboard :7860, API :8000, POST /predict)
