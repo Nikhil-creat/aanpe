@@ -1,0 +1,10 @@
+torch>=2.3
+segmentation-models-pytorch>=0.3.4
+timm
+albumentations>=1.4
+datasets
+numpy
+opencv-python-headless
+matplotlib
+gradio>=4
+langgraph
