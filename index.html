@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AANPE v4.0 — Mars Rover Perception &amp; Terrain Safety Engine</title>
-<meta name="description" content="AANPE v4.0: Mars rover terrain segmentation, agentic RAG safety loop and deterministic fail-safe, built on NASA JPL AI4Mars."><meta name="theme-color" content="#0a0a0a"><meta property="og:title" content="AANPE v4.0 Mars Rover Terrain Safety Engine"><meta property="og:description" content="Seen. Judged. Safe to drive."><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%271.6%27%3E%3Cpath d=%27M21 16V8l-9-5-9 5v8l9 5z%27/%3E%3C/svg%3E"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="description" content="AANPE v4.0: Mars rover terrain segmentation, agentic RAG safety loop and deterministic fail-safe, built on NASA JPL AI4Mars."><meta name="theme-color" content="#0a0a0a"><meta property="og:title" content="AANPE v4.0 Mars Rover Terrain Safety Engine"><meta property="og:description" content="Seen. Judged. Safe to drive."><meta property="og:type" content="website"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%271.6%27%3E%3Cpath d=%27M21 16V8l-9-5-9 5v8l9 5z%27/%3E%3C/svg%3E"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0a;--g:rgba(255,255,255,.12);--b:rgba(255,255,255,.18)}
 *{box-sizing:border-box;margin:0}
@@ -62,7 +62,7 @@ footer a{color:#fff;text-decoration:none;margin-right:16px}footer a:hover{text-d
 @media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}html{scroll-behavior:auto}}
 </style></head><body>
 <div id="bg"><video id="v" muted playsinline preload="auto" crossorigin="anonymous" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260729_102822_0e6c87e8-c141-4744-bf32-ad30db296371.mp4"></video></div>
-<div class="w">
+<div id="pb" style="position:fixed;top:0;left:0;height:2px;width:0;background:#fff;z-index:99"></div><div class="w">
 <nav class="px"><a class="logo" href="#top"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/></svg>aanpe</a>
 <div class="links"><a href="#pipeline">Pipeline <sup class="mono" style="font-size:10px;color:#fff9">6</sup></a><a href="#arch">Architecture</a><a href="#eval">Evaluation</a><a href="#sim">Safety demo</a><a href="#creds">Credentials</a><a href="#contact">Contact</a></div>
 <button class="btn sec sq" onclick="openChat()">Ask Rover AI</button><button id="mb" class="btn sec sq" aria-label="Menu" onclick="document.querySelector('.links').classList.toggle('open')">Menu</button></nav>
@@ -108,7 +108,7 @@ footer a{color:#fff;text-decoration:none;margin-right:16px}footer a:hover{text-d
    <label class="mono" style="font-size:10px">Mean entropy <span id="ev">0.40</span></label><input id="e" type="range" min="0" max="140" value="40">
    <label class="mono" style="font-size:10px">Latency <span id="lv">90</span> ms</label><input id="l" type="range" min="20" max="250" value="90">
    <div class="seg" id="seg"></div></div>
-  <div class="card pad"><h3>Agent log</h3><div class="log" id="log"></div></div>
+  <div class="card pad"><h3>Agent log</h3><div class="log" id="log"></div><button class="btn sec" style="margin-top:12px" onclick="briefing()">Generate AI mission briefing</button></div>
  </div>
  <p style="font-size:12px;color:#ffffff99">Rules mirror the spec: sand above 15%, big rock in the drive zone, entropy above the limit (set to 1.00 here) or latency above 150 ms. Class order: soil, bedrock, sand, big rock.</p>
 </section>
@@ -119,7 +119,11 @@ footer a{color:#fff;text-decoration:none;margin-right:16px}footer a:hover{text-d
   <div class="card pad"><h3>Education</h3><p>B.Tech, Computer Science and Engineering<br>Vaagdevi College of Engineering, 2023–2027 (final year)<br>Thorrur, Telangana, India</p></div>
   <div class="card pad"><h3>Experience</h3><ul><li>Machine Learning Engineer Intern, Yuva Intern (NSDC), Aug–Sep 2026</li><li>Data Analytics Intern, Thiranex, Jul–Aug 2026</li></ul></div>
   <div class="card pad"><h3>Certifications</h3><ul><li>NASSCOM / Skill India: AI-Data Engineering &amp; Cloud Infrastructure Analyst</li><li>IBM SkillsBuild: AI Fundamentals</li><li>Reliance Foundation: AI/ML Engineer Foundation</li></ul></div>
-  <div class="card pad"><h3>Stack in this project</h3><span class="tag">PyTorch</span><span class="tag">segmentation-models-pytorch</span><span class="tag">Albumentations</span><span class="tag">LangGraph</span><span class="tag">FAISS / Qdrant</span><span class="tag">Gradio</span><span class="tag">Docker</span><span class="tag">Groq</span><span class="tag">Gemini</span></div>
+  <div class="card pad"><h3>Stack in this project</h3><span class="tag">PyTorch</span><span class="tag">segmentation-models-pytorch</span><span class="tag">Albumentations</span><span class="tag">LangGraph</span><span class="tag">FAISS / Qdrant</span><span class="tag">Gradio</span><span class="tag">Docker</span><span class="tag">Groq</span><span class="tag">Gemini</span></div><div class="card pad"><h3>GitHub live</h3><p id="gh">Loading from the GitHub API...</p><p style="margin-top:8px"><a style="color:#fff" href="https://github.com/Nikhil-creat" target="_blank" rel="noopener">github.com/Nikhil-creat</a></p></div>
+<div class="card pad"><h3>Selected projects</h3><a class="tag" style="color:#fff;text-decoration:none" target="_blank" rel="noopener" href="https://github.com/Nikhil-creat/voyagr">voyagr</a><a class="tag" style="color:#fff;text-decoration:none" target="_blank" rel="noopener" href="https://github.com/Nikhil-creat/kv-freight">kv-freight</a><a class="tag" style="color:#fff;text-decoration:none" target="_blank" rel="noopener" href="https://github.com/Nikhil-creat/AssignmentWriter">AssignmentWriter</a><a class="tag" style="color:#fff;text-decoration:none" target="_blank" rel="noopener" href="https://github.com/Nikhil-creat/resume-reviewer-pro">resume-reviewer-pro</a><a class="tag" style="color:#fff;text-decoration:none" target="_blank" rel="noopener" href="https://github.com/Nikhil-creat/voice-assistant">voice-assistant</a><a class="tag" style="color:#fff;text-decoration:none" target="_blank" rel="noopener" href="https://github.com/Nikhil-creat/semanticache">semanticache</a></div>
+<div class="card pad"><h3>Focus areas</h3><span class="tag">Machine learning</span><span class="tag">Agentic AI</span><span class="tag">RAG</span><span class="tag">Computer vision</span><span class="tag">Data analytics</span><span class="tag">Cloud and data engineering</span></div>
+<div class="card pad"><h3>Open to</h3><p>Applying to the UNDP Digital, AI and Innovation (DAI) Hub, and open to ML, data and AI engineering roles and internships.</p><p style="margin-top:8px"><a style="color:#fff" href="https://in.linkedin.com/in/nikhil-chary-sriramoju-95041b38a" target="_blank" rel="noopener">LinkedIn</a></p></div>
+
  </div>
 </section>
 <section class="px stack" id="arch"><div><div class="badge">Architecture</div><h2 style="font-size:clamp(34px,5vw,52px)">From pixels to a drive decision.</h2></div>
@@ -213,5 +217,13 @@ document.querySelectorAll(".links a").forEach(a=>a.onclick=()=>a.parentNode.clas
 function ask(b){$("q").value=b.textContent;send(new Event("submit"))}
 function openChat(){$('chat').classList.add('open');$('fab').style.display='none';const k=sessionStorage.getItem('k');if(k&&!prov){$('key').value=k;connect()}}
 function closeChat(){$('chat').classList.remove('open');$('fab').style.display=''}
+
+addEventListener('scroll',()=>{$('pb').style.width=prog()*100+'%'},{passive:true});
+fetch('https://api.github.com/users/Nikhil-creat').then(r=>r.json()).then(u=>{$('gh').textContent=u.public_repos+' public repos · '+u.followers+' followers'}).catch(()=>{$('gh').textContent='GitHub stats unavailable right now.'});
+function briefing(){
+ const t=$('log').textContent;openChat();
+ if(!prov){add('a','Connect a key first, then tap the briefing button again.');return}
+ $('q').value='Write a short rover mission briefing (4 lines max) for this terrain assessment, with one clear action:\n'+t;send(new Event('submit'))}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body></html>
