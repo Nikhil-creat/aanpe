@@ -11,3 +11,7 @@ git push -u origin main
 # Username: Nikhil-creat | Password: a GitHub Personal Access Token (repo scope)
 # Then: repo Settings > Pages > Deploy from a branch > main / (root)
 # Update later: git add . && git commit -m "update" && git push
+
+# Update after unzipping the new zip over the folder
+cd ~/aanpe && unzip -o ~/storage/downloads/aanpe-v4-master.zip
+git add . && git commit -m "Add CI, PWA, AI briefing" && git push
