@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AANPE v4.0 — Mars Rover Perception &amp; Terrain Safety Engine</title>
+<meta name="description" content="AANPE v4.0: Mars rover terrain segmentation, agentic RAG safety loop and deterministic fail-safe, built on NASA JPL AI4Mars."><meta name="theme-color" content="#0a0a0a"><meta property="og:title" content="AANPE v4.0 Mars Rover Terrain Safety Engine"><meta property="og:description" content="Seen. Judged. Safe to drive."><meta property="og:type" content="website"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%271.6%27%3E%3Cpath d=%27M21 16V8l-9-5-9 5v8l9 5z%27/%3E%3C/svg%3E"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--g:rgba(255,255,255,.12);--b:rgba(255,255,255,.18)}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#fff;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(255,255,255,.2)}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(ellipse at 50% 60%,#5a2a14,#1a1d26 60%,#0a0a0a)}
+#bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#bg:after{content:"";position:absolute;inset:0;background:linear-gradient(#0006,#0000 30%,#0007)}
+.w{position:relative;z-index:10}
+.px{padding-inline:clamp(20px,4vw,48px)}
+nav{position:fixed;top:0;left:0;right:0;z-index:50;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;height:64px;backdrop-filter:blur(12px);background:#0003}
+.logo{display:flex;gap:8px;align-items:center;font-size:20px;font-weight:500;letter-spacing:-.02em;text-decoration:none;color:#fff}
+.links{display:flex;gap:36px}
+.links a{font-size:14px;color:#ffffffd9;text-decoration:none;transition:color .3s}.links a:hover{color:#fff}
+.btn{font:inherit;font-size:13px;font-weight:500;border-radius:999px;padding:10px 20px;border:1px solid transparent;cursor:pointer;transition:background .3s;text-decoration:none;display:inline-flex;gap:6px;align-items:center}
+.pri{background:#fff;color:#000}.pri:hover{background:#ffffffd9}
+.sec{background:var(--g);border-color:#ffffff40;color:#fff;backdrop-filter:blur(12px)}.sec:hover{background:#ffffff33}
+.sec.sq{border-radius:6px}
+section{min-height:100svh;padding-top:104px;padding-bottom:56px;display:flex;flex-direction:column;justify-content:space-between;gap:48px}
+.row{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap}
+.row.end{align-items:flex-end}
+.mono{font-family:Inter,monospace;font-size:12px;text-transform:uppercase;letter-spacing:.15em}
+.sh{text-shadow:0 2px 12px #0008}
+.badge{display:inline-block;border-left:2px solid #fff;background:rgba(255,255,255,.15);padding:6px 12px;backdrop-filter:blur(12px);font-size:11px;text-transform:uppercase;letter-spacing:.15em;margin-bottom:20px}
+h1,h2{font-weight:400;line-height:1.05;letter-spacing:-.03em;font-size:clamp(44px,8vw,76px);text-shadow:0 4px 24px #0009}
+.lead{font-size:clamp(18px,2vw,20px);line-height:1.6;max-width:320px}
+.r{text-align:right}
+.card{background:var(--g);backdrop-filter:blur(14px);border:1px solid var(--b);border-radius:16px}
+.contact{display:flex;gap:16px;align-items:center;padding:12px;border-radius:12px;background:rgba(255,255,255,.15);backdrop-filter:blur(12px)}
+.av{width:80px;height:96px;border-radius:8px;background:linear-gradient(160deg,#e8743b,#3a2a52);display:grid;place-items:center;font-size:28px;font-weight:600}
+.cap{width:100%;max-width:440px;padding:0 24px}
+.cap div{display:flex;gap:20px;padding:20px 0;border-bottom:1px solid var(--b)}.cap div:last-child{border:0}
+.cap b{font-size:18px;font-weight:500}.cap p{margin-top:6px;font-size:14px;line-height:1.6;color:#ffffffb3}
+.cap i{font-style:normal;font-size:11px;letter-spacing:.15em;color:#ffffff8c;padding-top:5px}
+.rv{opacity:0;transform:translateY(32px);transition:all .7s ease-out}.rv.on{opacity:1;transform:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.pad{padding:24px}
+.pad h3{font-size:17px;font-weight:500;margin-bottom:8px}.pad p,.pad li{font-size:14px;line-height:1.65;color:#ffffffb8}
+.pad ul{padding-left:18px}
+.tag{display:inline-block;margin:4px 6px 0 0;padding:4px 10px;border:1px solid var(--b);border-radius:999px;font-size:12px;background:#ffffff14}
+.stack{padding-block:24px;min-height:0;gap:24px}
+input[type=range]{width:100%;accent-color:#fff}
+.log{font-size:13px;line-height:1.7;white-space:pre-wrap;color:#ffffffd9;min-height:96px}
+.warn{color:#ffb25b}.ok{color:#8fe3a8}
+.seg{height:14px;border-radius:7px;display:flex;overflow:hidden;margin:14px 0}
+#chat{position:fixed;right:20px;bottom:20px;z-index:60;width:min(380px,calc(100vw - 40px));display:none;flex-direction:column;max-height:70vh;background:#0c0c0ee6;backdrop-filter:blur(18px)}
+#chat.open{display:flex}
+#msgs{overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.55;min-height:180px}
+.m{padding:9px 12px;border-radius:12px;max-width:90%;white-space:pre-wrap}.u{align-self:flex-end;background:#fff;color:#000}.a{background:#ffffff1c}
+#chat input[type=text],#chat input[type=password]{width:100%;background:#ffffff14;border:1px solid var(--b);border-radius:8px;color:#fff;padding:10px;font:inherit;font-size:13px}
+#fab{position:fixed;right:20px;bottom:20px;z-index:55}
+footer{border-top:1px solid var(--b);padding-block:32px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:#ffffffa6;backdrop-filter:blur(12px);background:#0005}
+footer a{color:#fff;text-decoration:none;margin-right:16px}footer a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#mb{display:none}.chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px}.chips button{font:inherit;font-size:12px;color:#fff;background:#ffffff14;border:1px solid var(--b);border-radius:999px;padding:5px 10px;cursor:pointer}@media(max-width:760px){.links{display:none}.links.open{display:flex;position:fixed;top:64px;left:0;right:0;flex-direction:column;padding:20px;gap:18px;background:#0a0a0af5;border-bottom:1px solid var(--b)}#mb{display:inline-flex}.r{text-align:left}nav>.sec:not(#mb){display:none}}
+@media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}html{scroll-behavior:auto}}
+</style></head><body>
+<div id="bg"><video id="v" muted playsinline preload="auto" crossorigin="anonymous" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260729_102822_0e6c87e8-c141-4744-bf32-ad30db296371.mp4"></video></div>
+<div class="w">
+<nav class="px"><a class="logo" href="#top"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/></svg>aanpe</a>
+<div class="links"><a href="#pipeline">Pipeline <sup class="mono" style="font-size:10px;color:#fff9">6</sup></a><a href="#arch">Architecture</a><a href="#eval">Evaluation</a><a href="#sim">Safety demo</a><a href="#creds">Credentials</a><a href="#contact">Contact</a></div>
+<button class="btn sec sq" onclick="openChat()">Ask Rover AI</button><button id="mb" class="btn sec sq" aria-label="Menu" onclick="document.querySelector('.links').classList.toggle('open')">Menu</button></nav>
+
+<main id="top">
+<section class="px">
+ <div class="row">
+  <div class="mono sh rv" style="display:grid;gap:8px;color:#ffffffe6"><span>/ Terrain segmentation</span><span>/ Agentic RAG safety loop</span><span>/ Edge fail-safe control</span></div>
+  <p class="lead sh rv r" style="transition-delay:.3s">We turn raw NavCam frames into drive-or-halt decisions a rover can trust.</p>
+ </div>
+ <div class="row end">
+  <div><div class="badge rv">Built on NASA JPL AI4Mars</div>
+  <h1 class="rv" style="transition-delay:.28s">Seen. Judged.<br>Safe to drive.</h1></div>
+  <div class="contact rv" style="transition-delay:.42s"><div class="av">NS</div>
+   <div style="display:grid;gap:6px;padding-right:8px"><b style="font-size:14px;font-weight:500">Nikhil Chary Sriramoju</b>
+   <span class="mono" style="font-size:10px;color:#fff9">Creator · ML Engineer</span>
+   <button class="btn pri" style="margin-top:6px;padding:8px 16px;font-size:12px" onclick="openChat()">Chat with the assistant ›</button></div></div>
+ </div>
+</section>
+<div style="height:80vh" aria-hidden="true"></div>
+
+<section class="px" id="pipeline">
+ <div class="row"><div class="badge rv">AANPE v4.0</div>
+ <p class="lead sh rv r" style="max-width:380px">Four classes, one rule: when the model is unsure, the rover stops.</p></div>
+ <div class="row end" style="gap:64px">
+  <div style="max-width:560px"><h2 class="rv">Learn to see<br>the ground.</h2>
+  <p class="sh rv" style="margin-top:24px;max-width:460px;color:#ffffffcc;line-height:1.65">Segment soil, bedrock, sand and big rock. Flag wheel-trap risk. Pull matching NASA anomaly records. Recommend a safer path.</p>
+  <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap" class="rv"><a class="btn pri" href="#sim">Run the safety demo ›</a><a class="btn sec" href="#creds">See credentials</a></div></div>
+  <div class="card cap rv">
+   <div><i>01</i><span><b>Vision engine</b><p>DeepLabV3+ or SegFormer with ConvNeXt/Swin encoders. Weighted cross-entropy plus focal Dice, ignoring label 255.</p></span></div>
+   <div><i>02</i><span><b>Agentic RAG loop</b><p>Perception, Safety Critic and Path agents in LangGraph, backed by a vector store of rover anomaly logs.</p></span></div>
+   <div><i>03</i><span><b>Deterministic fail-safe</b><p>Input sanitising, entropy thresholds and a 150 ms latency guard force a safe halt.</p></span></div>
+  </div>
+ </div>
+</section>
+
+<section class="px stack" id="sim">
+ <div><div class="badge">Safety critic demo</div><h2 style="font-size:clamp(34px,5vw,52px)">Try the decision rules.</h2></div>
+ <div class="grid">
+  <div class="card pad"><h3>Terrain in the drive path</h3>
+   <label class="mono" style="font-size:10px">Sand <span id="sv">10</span>%</label><input id="s" type="range" min="0" max="60" value="10">
+   <label class="mono" style="font-size:10px">Big rock <span id="rv2">3</span>%</label><input id="r" type="range" min="0" max="30" value="3">
+   <label class="mono" style="font-size:10px">Mean entropy <span id="ev">0.40</span></label><input id="e" type="range" min="0" max="140" value="40">
+   <label class="mono" style="font-size:10px">Latency <span id="lv">90</span> ms</label><input id="l" type="range" min="20" max="250" value="90">
+   <div class="seg" id="seg"></div></div>
+  <div class="card pad"><h3>Agent log</h3><div class="log" id="log"></div></div>
+ </div>
+ <p style="font-size:12px;color:#ffffff99">Rules mirror the spec: sand above 15%, big rock in the drive zone, entropy above the limit (set to 1.00 here) or latency above 150 ms. Class order: soil, bedrock, sand, big rock.</p>
+</section>
+
+<section class="px stack" id="creds">
+ <div><div class="badge">Credentials</div><h2 style="font-size:clamp(34px,5vw,52px)">Nikhil Chary Sriramoju</h2></div>
+ <div class="grid">
+  <div class="card pad"><h3>Education</h3><p>B.Tech, Computer Science and Engineering<br>Vaagdevi College of Engineering, 2023–2027 (final year)<br>Thorrur, Telangana, India</p></div>
+  <div class="card pad"><h3>Experience</h3><ul><li>Machine Learning Engineer Intern, Yuva Intern (NSDC), Aug–Sep 2026</li><li>Data Analytics Intern, Thiranex, Jul–Aug 2026</li></ul></div>
+  <div class="card pad"><h3>Certifications</h3><ul><li>NASSCOM / Skill India: AI-Data Engineering &amp; Cloud Infrastructure Analyst</li><li>IBM SkillsBuild: AI Fundamentals</li><li>Reliance Foundation: AI/ML Engineer Foundation</li></ul></div>
+  <div class="card pad"><h3>Stack in this project</h3><span class="tag">PyTorch</span><span class="tag">segmentation-models-pytorch</span><span class="tag">Albumentations</span><span class="tag">LangGraph</span><span class="tag">FAISS / Qdrant</span><span class="tag">Gradio</span><span class="tag">Docker</span><span class="tag">Groq</span><span class="tag">Gemini</span></div>
+ </div>
+</section>
+<section class="px stack" id="arch"><div><div class="badge">Architecture</div><h2 style="font-size:clamp(34px,5vw,52px)">From pixels to a drive decision.</h2></div>
+<div class="grid">
+<div class="card pad"><h3>1. Sanitise</h3><p>Shape, channel and range checks, plus a smoothing residual to flag sensor noise or adversarial perturbation.</p></div>
+<div class="card pad"><h3>2. Segment</h3><p>DeepLabV3+ with a ConvNeXt encoder. Labels 255 (rover, range over 30 m) are ignored in loss and metrics.</p></div>
+<div class="card pad"><h3>3. Judge</h3><p>Safety Critic reads class areas and entropy, then triggers retrieval over historical rover anomaly records.</p></div>
+<div class="card pad"><h3>4. Decide</h3><p>Path agent proposes a steering change, or the fail-safe forces a halt when entropy or latency limits break.</p></div></div></section>
+<section class="px stack" id="eval"><div><div class="badge">Evaluation protocol</div><h2 style="font-size:clamp(34px,5vw,52px)">Measured, not claimed.</h2></div>
+<div class="grid"><div class="card pad"><h3>Benchmarks</h3><p>Expert sets test_min1 and test_min3, scored against a baseline that predicts soil for every pixel.</p></div>
+<div class="card pad"><h3>Metrics</h3><p>Exact confusion matrix, pixel accuracy, per-class IoU and mean IoU, with label 255 excluded.</p></div>
+<div class="card pad"><h3>Failure analysis</h3><p>Sand predicted as soil or bedrock is extracted and saved to an inspection folder for review.</p></div></div>
+<p style="font-size:12px;color:#ffffff99">No scores are published here until you train and run <code>engine/evaluate.py</code> yourself.</p></section>
+<section class="px stack" id="deploy"><div><div class="badge">Deploy</div><h2 style="font-size:clamp(34px,5vw,52px)">Edge-ready container.</h2></div>
+<div class="card pad"><p>Multi-stage Docker build on the PyTorch 2.3 CUDA 12.1 runtime, non-root <code>roveruser</code>, Gradio on port 7860.</p><p style="margin-top:10px"><code>docker build -t aanpe . &amp;&amp; docker run --gpus all -p 7860:7860 aanpe</code></p></div>
+<div class="card pad"><h3>FAQ</h3><details><summary>Why halt instead of guessing?</summary><p>A wrong drive on sand can end a mission. Uncertain pixels become Restricted Hazard.</p></details><details style="margin-top:8px"><summary>Does the site run the model?</summary><p>No. The site is static; the model runs from the Python engine. The chatbot only talks to Groq or Gemini.</p></details></div></section>
+<section class="px stack" id="hire"><div><div class="badge">Contact</div><h2 style="font-size:clamp(34px,5vw,52px)">Work with Nikhil.</h2></div>
+<form class="card pad" style="display:grid;gap:10px;max-width:520px" onsubmit="event.preventDefault();location.href='mailto:sriramojunikhil66@gmail.com?subject='+encodeURIComponent('AANPE enquiry from '+n.value)+'&body='+encodeURIComponent(m.value)"><input id="n" required placeholder="Your name" style="background:#ffffff14;border:1px solid var(--b);border-radius:8px;color:#fff;padding:10px;font:inherit"><textarea id="m" required rows="4" placeholder="Message" style="background:#ffffff14;border:1px solid var(--b);border-radius:8px;color:#fff;padding:10px;font:inherit"></textarea><button class="btn pri" style="justify-self:start">Send by email</button></form></section>
+</main>
+
+<footer class="px" id="contact">
+ <div><b style="color:#fff">aanpe</b> · Mars Rover Perception &amp; Terrain Safety Engine<br>Dataset: NASA JPL AI4Mars. Built by Nikhil Chary Sriramoju.</div>
+ <div><a href="https://github.com/Nikhil-creat" target="_blank" rel="noopener">GitHub</a><a href="https://in.linkedin.com/in/nikhil-chary-sriramoju-95041b38a" target="_blank" rel="noopener">LinkedIn</a><a href="mailto:sriramojunikhil66@gmail.com">Email</a></div>
+</footer>
+</div>
+
+<button id="fab" class="btn pri" onclick="openChat()">Rover AI</button>
+<div id="chat" class="card" role="dialog" aria-label="Rover AI assistant">
+ <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--b)"><b style="font-weight:500">Rover AI <span id="mdl" style="font-size:11px;color:#fff9;font-weight:400"></span></b><button class="btn sec" style="padding:4px 12px" onclick="closeChat()">Close</button></div>
+ <div id="keybox" style="padding:12px 14px;border-bottom:1px solid var(--b);display:grid;gap:8px"><input type="password" id="key" placeholder="Paste a free Groq (gsk_…) or Gemini (AIza…) key" autocomplete="off"><button class="btn pri" onclick="connect()">Connect</button><span style="font-size:11px;color:#fff9">The key stays in this browser and goes only to Groq or Google.</span></div>
+ <div id="msgs"><div class="m a">Ask me how AANPE segments terrain, why entropy forces a halt, or how the RAG loop works.</div></div>
+ <div class="chips"><button onclick="ask(this)">How does the fail-safe work?</button><button onclick="ask(this)">Explain the loss function</button><button onclick="ask(this)">What is AI4Mars?</button></div><form onsubmit="send(event)" style="display:flex;gap:8px;padding:12px"><input type="text" id="q" placeholder="Ask about the rover engine" aria-label="Message"><button class="btn pri" type="submit">Send</button></form>
+</div>
+
+<script>
+// Reveal on scroll
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('on')),{threshold:.15});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+// Scroll-scrubbed video (lerp 0.12, seek when delta > 0.04s)
+const v=document.getElementById('v');let tgt=0,sm=0;
+const prog=()=>{const m=document.documentElement.scrollHeight-innerHeight;return m>0?Math.min(1,Math.max(0,scrollY/m)):0};
+addEventListener('scroll',()=>tgt=prog(),{passive:true});
+(function loop(){sm+=(tgt-sm)*.12;if(v.duration&&!v.seeking){const t=sm*(v.duration-.05);if(Math.abs(v.currentTime-t)>.04)v.currentTime=t}requestAnimationFrame(loop)})();
+v.addEventListener('loadeddata',()=>{v.pause()});
+// Safety critic simulator
+const $=id=>document.getElementById(id);
+function sim(){
+ const s=+$('s').value,r=+$('r').value,H=+$('e').value/100,L=+$('l').value;
+ $('sv').textContent=s;$('rv2').textContent=r;$('ev').textContent=H.toFixed(2);$('lv').textContent=L;
+ const rest=Math.max(0,100-s-r),soil=rest*.6,bed=rest-soil;
+ $('seg').innerHTML=[[soil,'#4cc38a'],[bed,'#4a8bff'],[s,'#ffb25b'],[r,'#9b6bff']].map(([w,c])=>`<span style="width:${w}%;background:${c}"></span>`).join('');
+ let o=`Perception: soil ${soil.toFixed(0)}% · bedrock ${bed.toFixed(0)}% · sand ${s}% · rock ${r}%\n`;
+ if(H>1||L>150){o+=`<span class="warn">Fail-safe: ${H>1?'entropy above limit':'latency above 150 ms'}. Uncertain pixels marked Restricted Hazard. SAFE HALT.</span>`}
+ else if(s>15||r>5){o+=`<span class="warn">Critic: ${s>15?'sand above 15%':'big rock in drive zone'}. RAG retrieval triggered.\nPath: ALERT, wheel-entrapment risk. Re-route steering +15° toward bedrock.</span>`}
+ else o+=`<span class="ok">Critic: terrain within limits. Proceed on current heading.</span>`;
+ $('log').innerHTML=o}
+['s','r','e','l'].forEach(i=>$(i).addEventListener('input',sim));sim();
+// Chat: Groq + Gemini with model auto-detect
+const SYS="You are Rover AI, the assistant for AANPE v4.0, a Mars rover terrain-safety engine by Nikhil Chary Sriramoju built on the NASA JPL AI4Mars dataset. Pipeline: Albumentations data prep with ignore index 255 and range mask over 30 m; segmentation (DeepLabV3+/SegFormer) into soil, bedrock, sand, big rock; weighted CE plus focal Dice loss; LangGraph agents (Perception, Safety Critic, Path Recommendation) with RAG over rover anomaly records; entropy and 150 ms latency fail-safe; Gradio dashboard; Docker. Be concise. Do not invent benchmark numbers.";
+let prov=null,model=null,hist=[];
+const pick=(ids,prefs)=>{for(const p of prefs){const m=ids.find(i=>p.test(i));if(m)return m}return ids[0]};
+async function connect(){
+ const k=$('key').value.trim();if(!k)return;
+ try{
+  if(k.startsWith('gsk_')){
+   const r=await fetch('https://api.groq.com/openai/v1/models',{headers:{Authorization:'Bearer '+k}});if(!r.ok)throw 0;
+   const ids=(await r.json()).data.map(m=>m.id).filter(i=>!/whisper|guard|tts|playai|orpheus/i.test(i));
+   model=pick(ids,[/llama-3\.3-70b/,/llama-4/,/70b/,/llama/]);prov='groq'}
+  else{
+   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?key='+k);if(!r.ok)throw 0;
+   const ids=(await r.json()).models.filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/','')).filter(i=>/gemini/.test(i)&&!/tts|image|embed|live/.test(i));
+   model=pick(ids,[/gemini-2\.5-flash$/,/flash(?!-lite)/,/flash/,/gemini/]);prov='gemini'}
+  window._k=k;sessionStorage.setItem('k',k);$('keybox').style.display='none';$('mdl').textContent='· '+prov+' / '+model;
+  add('a','Connected. Model auto-selected: '+model)
+ }catch(e){add('a','Key rejected. Check it is a valid Groq (gsk_…) or Gemini (AIza…) key.')}}
+function add(c,t){const d=document.createElement('div');d.className='m '+c;d.textContent=t;$('msgs').appendChild(d);$('msgs').scrollTop=1e9;return d}
+async function send(e){
+ e.preventDefault();const t=$('q').value.trim();if(!t)return;$('q').value='';add('u',t);
+ if(!prov){add('a','Paste a free API key above first.');return}
+ hist.push({role:'user',text:t});const d=add('a','…');
+ try{let out;
+  if(prov==='groq'){
+   const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+window._k},body:JSON.stringify({model,messages:[{role:'system',content:SYS},...hist.map(h=>({role:h.role,content:h.text}))]})});
+   const j=await r.json();if(!r.ok)throw new Error(j.error?.message);out=j.choices[0].message.content}
+  else{
+   const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${window._k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:hist.map(h=>({role:h.role==='user'?'user':'model',parts:[{text:h.text}]}))})});
+   const j=await r.json();if(!r.ok)throw new Error(j.error?.message);out=j.candidates[0].content.parts.map(p=>p.text).join('')}
+  hist.push({role:'assistant',text:out});d.textContent=out
+ }catch(err){hist.pop();d.textContent='Request failed: '+(err.message||'network error')}}
+document.querySelectorAll(".links a").forEach(a=>a.onclick=()=>a.parentNode.classList.remove("open"));
+function ask(b){$("q").value=b.textContent;send(new Event("submit"))}
+function openChat(){$('chat').classList.add('open');$('fab').style.display='none';const k=sessionStorage.getItem('k');if(k&&!prov){$('key').value=k;connect()}}
+function closeChat(){$('chat').classList.remove('open');$('fab').style.display=''}
+</script>
+</body></html>
