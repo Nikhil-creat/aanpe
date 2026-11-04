@@ -11,7 +11,7 @@ body{background:var(--bg);color:#fff;font-family:Inter,system-ui,sans-serif;-web
 ::selection{background:rgba(255,255,255,.2)}
 #bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(ellipse at 50% 60%,#5a2a14,#1a1d26 60%,#0a0a0a)}
 #bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-#bg:after{content:"";position:absolute;inset:0;background:linear-gradient(#0006,#0000 30%,#0007)}
+#bg:after{content:"";position:absolute;inset:0;background:linear-gradient(#000a,#0003 35%,#0008)}
 .w{position:relative;z-index:10}
 .px{padding-inline:clamp(20px,4vw,48px)}
 nav{position:fixed;top:0;left:0;right:0;z-index:50;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;height:64px;backdrop-filter:blur(12px);background:#0003}
@@ -49,7 +49,7 @@ input[type=range]{width:100%;accent-color:#fff}
 .log{font-size:13px;line-height:1.7;white-space:pre-wrap;color:#ffffffd9;min-height:96px}
 .warn{color:#ffb25b}.ok{color:#8fe3a8}
 .seg{height:14px;border-radius:7px;display:flex;overflow:hidden;margin:14px 0}
-#chat{position:fixed;right:20px;bottom:20px;z-index:60;width:min(380px,calc(100vw - 40px));display:none;flex-direction:column;max-height:70vh;background:#0c0c0ee6;backdrop-filter:blur(18px)}
+#chat{position:fixed;right:20px;bottom:20px;z-index:60;width:min(380px,calc(100vw - 40px));display:none;flex-direction:column;max-height:72svh;background:#0c0c0ee6;backdrop-filter:blur(18px)}
 #chat.open{display:flex}
 #msgs{overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.55;min-height:180px}
 .m{padding:9px 12px;border-radius:12px;max-width:90%;white-space:pre-wrap}.u{align-self:flex-end;background:#fff;color:#000}.a{background:#ffffff1c}
@@ -61,10 +61,10 @@ footer a{color:#fff;text-decoration:none;margin-right:16px}footer a:hover{text-d
 #mb{display:none}.chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px}.chips button{font:inherit;font-size:12px;color:#fff;background:#ffffff14;border:1px solid var(--b);border-radius:999px;padding:5px 10px;cursor:pointer}@media(max-width:760px){.links{display:none}.links.open{display:flex;position:fixed;top:64px;left:0;right:0;flex-direction:column;padding:20px;gap:18px;background:#0a0a0af5;border-bottom:1px solid var(--b)}#mb{display:inline-flex}.r{text-align:left}nav>.sec:not(#mb){display:none}}
 @media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}html{scroll-behavior:auto}}
 </style></head><body>
-<div id="bg"><video id="v" muted playsinline preload="auto" crossorigin="anonymous" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260729_102822_0e6c87e8-c141-4744-bf32-ad30db296371.mp4"></video></div>
+<div id="bg"><canvas id="cv" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .5s"></canvas><video id="v" style="transition:opacity .5s" muted playsinline preload="auto" crossorigin="anonymous" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260729_102822_0e6c87e8-c141-4744-bf32-ad30db296371.mp4"></video></div>
 <div id="pb" style="position:fixed;top:0;left:0;height:2px;width:0;background:#fff;z-index:99"></div><div class="w">
 <nav class="px"><a class="logo" href="#top"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/></svg>aanpe</a>
-<div class="links"><a href="#pipeline">Pipeline <sup class="mono" style="font-size:10px;color:#fff9">6</sup></a><a href="#arch">Architecture</a><a href="#eval">Evaluation</a><a href="#sim">Safety demo</a><a href="#creds">Credentials</a><a href="#contact">Contact</a></div>
+<div class="links"><a href="#pipeline">Pipeline <sup class="mono" style="font-size:10px;color:#fff9">6</sup></a><a href="#cnn">CNN lab</a><a href="#arch">Architecture</a><a href="#eval">Evaluation</a><a href="#sim">Safety demo</a><a href="#creds">Credentials</a><a href="#contact">Contact</a></div>
 <button class="btn sec sq" onclick="openChat()">Ask Rover AI</button><button id="mb" class="btn sec sq" aria-label="Menu" onclick="document.querySelector('.links').classList.toggle('open')">Menu</button></nav>
 
 <main id="top">
@@ -126,6 +126,11 @@ footer a{color:#fff;text-decoration:none;margin-right:16px}footer a:hover{text-d
 
  </div>
 </section>
+<section class="px stack" id="cnn"><div><div class="badge">CNN feature lab</div><h2 style="font-size:clamp(34px,5vw,52px)">See what a conv layer sees.</h2></div>
+<div class="grid"><div class="card pad"><h3>Input</h3><canvas id="ci" style="width:100%;border-radius:8px;background:#0006"></canvas>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><label class="btn pri" style="cursor:pointer">Upload image<input type="file" accept="image/*" id="cf" hidden></label><button class="btn sec" onclick="sample()">Use sample terrain</button></div></div>
+<div class="card pad"><h3>Conv + ReLU + max-pool</h3><canvas id="co" style="width:100%;border-radius:8px;background:#0006"></canvas><p id="cr" style="margin-top:12px">Load an image to run the layer.</p></div></div>
+<p style="font-size:12px;color:#ffffff99">This runs fixed Sobel kernels in your browser to show how convolution layers respond to texture. It is not the trained DeepLabV3+ segmenter, and the roughness bands are rough placeholders.</p></section>
 <section class="px stack" id="arch"><div><div class="badge">Architecture</div><h2 style="font-size:clamp(34px,5vw,52px)">From pixels to a drive decision.</h2></div>
 <div class="grid">
 <div class="card pad"><h3>1. Sanitise</h3><p>Shape, channel and range checks, plus a smoothing residual to flag sensor noise or adversarial perturbation.</p></div>
@@ -163,11 +168,24 @@ footer a{color:#fff;text-decoration:none;margin-right:16px}footer a:hover{text-d
 const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('on')),{threshold:.15});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 // Scroll-scrubbed video (lerp 0.12, seek when delta > 0.04s)
-const v=document.getElementById('v');let tgt=0,sm=0;
+const v=document.getElementById('v'),cv=document.getElementById('cv'),cx=cv.getContext('2d');let tgt=0,sm=0,fr=[],ready=false,last=-1;
 const prog=()=>{const m=document.documentElement.scrollHeight-innerHeight;return m>0?Math.min(1,Math.max(0,scrollY/m)):0};
+function size(){const d=Math.min(devicePixelRatio||1,2);cv.width=innerWidth*d;cv.height=innerHeight*d;last=-1}
+addEventListener('resize',size);size();
 addEventListener('scroll',()=>tgt=prog(),{passive:true});
-(function loop(){sm+=(tgt-sm)*.12;if(v.duration&&!v.seeking){const t=sm*(v.duration-.05);if(Math.abs(v.currentTime-t)>.04)v.currentTime=t}requestAnimationFrame(loop)})();
-v.addEventListener('loadeddata',()=>{v.pause()});
+function draw(b){const W=cv.width,H=cv.height,k=Math.max(W/b.width,H/b.height),w=b.width*k,h=b.height*k;cx.drawImage(b,(W-w)/2,(H-h)/2,w,h)}
+async function extract(){
+ const o=document.createElement('video');o.muted=true;o.crossOrigin='anonymous';o.playsInline=true;o.preload='auto';o.src=v.src;
+ await new Promise(r=>{o.onloadeddata=r;o.load()});
+ const mob=innerWidth<700,n=Math.min(mob?48:90,Math.max(24,Math.floor(o.duration*12))),mw=mob?640:960,c=document.createElement('canvas');
+ c.width=mw;c.height=Math.round(mw*o.videoHeight/o.videoWidth);const g=c.getContext('2d');
+ for(let i=0;i<n;i++){await new Promise(r=>{o.onseeked=r;o.currentTime=i/(n-1)*(o.duration-.05)});g.drawImage(o,0,0,c.width,c.height);fr.push(await createImageBitmap(c))}
+ ready=true;cv.style.opacity=1;v.style.opacity=0}
+v.addEventListener('loadeddata',()=>{v.pause();setTimeout(()=>extract().catch(()=>{}),300)});
+(function loop(){sm+=(tgt-sm)*.12;
+ if(ready){const i=Math.round(sm*(fr.length-1));if(i!==last){draw(fr[i]);last=i}}
+ else if(v.duration&&!v.seeking){const t=sm*(v.duration-.05);if(Math.abs(v.currentTime-t)>.04)v.currentTime=t}
+ requestAnimationFrame(loop)})();
 // Safety critic simulator
 const $=id=>document.getElementById(id);
 function sim(){
@@ -183,36 +201,76 @@ function sim(){
 ['s','r','e','l'].forEach(i=>$(i).addEventListener('input',sim));sim();
 // Chat: Groq + Gemini with model auto-detect
 const SYS="You are Rover AI, the assistant for AANPE v4.0, a Mars rover terrain-safety engine by Nikhil Chary Sriramoju built on the NASA JPL AI4Mars dataset. Pipeline: Albumentations data prep with ignore index 255 and range mask over 30 m; segmentation (DeepLabV3+/SegFormer) into soil, bedrock, sand, big rock; weighted CE plus focal Dice loss; LangGraph agents (Perception, Safety Critic, Path Recommendation) with RAG over rover anomaly records; entropy and 150 ms latency fail-safe; Gradio dashboard; Docker. Be concise. Do not invent benchmark numbers.";
-let prov=null,model=null,hist=[];
-const pick=(ids,prefs)=>{for(const p of prefs){const m=ids.find(i=>p.test(i));if(m)return m}return ids[0]};
+let prov=null,model=null,hist=[],cands=[];
+const KB=[
+["data","Data pipeline: loads hassanjbara/AI4MARS (train, test_min1, test_min3). Rover and range masks (over 30 m) plus invalid labels become ignore index 255. Masks resize with nearest-neighbour. Albumentations applies flips, brightness/contrast and CoarseDropout to image and mask together."],
+["weights","Class weights are computed from pixel counts: Weight_c = 1 - Count_c / Total labeled pixels. Classes: 0 Soil, 1 Bedrock, 2 Sand, 3 Big Rock."],
+["model","Model: segmentation-models-pytorch DeepLabV3+ with a ConvNeXt encoder (timm tu-convnext_small), 4 output classes. SegFormer or Swin are alternatives."],
+["loss","Loss: L_total = alpha * class-weighted cross-entropy (ignore 255) + beta * focal Dice loss (ignore 255). Dice handles class imbalance, focal exponent focuses on hard classes."],
+["agents","Agentic loop (LangGraph): RoverPerceptionAgent outputs class areas; SafetyCriticAgent flags Sand above 15% or Big Rock in the drive zone and triggers retrieval; PathRecommendationAgent turns predictions plus retrieved records into a steering recommendation, for example re-route +15 degrees toward bedrock."],
+["rag","RAG: an in-memory vector store holds historical rover anomaly notes such as Spirit wheel slip in sand, Opportunity dune entrapment and Curiosity wheel damage on sharp bedrock. Retrieval runs only when the critic flags high-risk terrain."],
+["failsafe","Fail-safe: input sanitising checks shape, channels, finite values, range and a smoothing residual for noise or adversarial perturbation. Pixel entropy H(x) is computed; if mean entropy exceeds H_max or latency exceeds 150 ms, uncertain pixels become Restricted Hazard and a safe halt is issued."],
+["eval","Evaluation: confusion matrix, pixel accuracy, per-class IoU and mean IoU on test_min1 and test_min3, ignoring 255, compared with a baseline predicting soil everywhere. Sand false negatives are saved for inspection. No scores are published yet."],
+["deploy","Deployment: multi-stage Docker on pytorch 2.3.0 CUDA 12.1 runtime, non-root roveruser, port 7860 for Gradio, plus a FastAPI service (api.py) and docker-compose. CI runs on GitHub Actions."],
+["author","Author: Nikhil Chary Sriramoju, final-year B.Tech CSE at Vaagdevi College of Engineering (2023-2027), ML Engineer Intern at Yuva Intern (NSDC) and Data Analytics Intern at Thiranex in 2026, with NASSCOM/Skill India, IBM SkillsBuild and Reliance Foundation certifications."],
+["site","This website is static on GitHub Pages. The chatbot calls Groq or Gemini directly from the browser with the visitor's own key; the CNN lab uses fixed Sobel kernels, not the trained model."]];
+const tok=t=>t.toLowerCase().match(/[a-z0-9+]{2,}/g)||[];
+const DF={};KB.forEach(([,t])=>new Set(tok(t)).forEach(w=>DF[w]=(DF[w]||0)+1));
+function retrieve(q,k){const qs=tok(q);return KB.map(([id,t])=>{const ws=tok(t);let sc=0;qs.forEach(w=>{const f=ws.filter(x=>x===w).length;if(f)sc+=(f/(f+1.2))*Math.log(1+KB.length/DF[w])});return{id,t,sc}}).sort((a,b)=>b.sc-a.sc).slice(0,k)}
 async function connect(){
  const k=$('key').value.trim();if(!k)return;
  try{
   if(k.startsWith('gsk_')){
    const r=await fetch('https://api.groq.com/openai/v1/models',{headers:{Authorization:'Bearer '+k}});if(!r.ok)throw 0;
-   const ids=(await r.json()).data.map(m=>m.id).filter(i=>!/whisper|guard|tts|playai|orpheus/i.test(i));
-   model=pick(ids,[/llama-3\.3-70b/,/llama-4/,/70b/,/llama/]);prov='groq'}
+   const ids=(await r.json()).data.map(m=>m.id).filter(i=>!/whisper|guard|tts|playai|orpheus|safeguard/i.test(i));
+   const pre=[/llama-3\.3-70b/,/llama-4/,/gpt-oss-120b/,/70b/,/llama/].map(p=>ids.find(i=>p.test(i))).filter(Boolean);
+   cands=[...new Set([...pre,...ids])];prov='groq'}
   else{
    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?key='+k);if(!r.ok)throw 0;
-   const ids=(await r.json()).models.filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/','')).filter(i=>/gemini/.test(i)&&!/tts|image|embed|live/.test(i));
-   model=pick(ids,[/gemini-2\.5-flash$/,/flash(?!-lite)/,/flash/,/gemini/]);prov='gemini'}
+   const ids=(await r.json()).models.filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/','')).filter(i=>/^gemini/.test(i)&&!/tts|image|embed|live|audio|robotics|computer|banana|thinking/.test(i));
+   const ver=i=>{const m=i.match(/gemini-(\d+(?:\.\d+)?)/);return m?parseFloat(m[1]):0};
+   const score=i=>(/flash/.test(i)?1000:0)-(/lite/.test(i)?500:0)+ver(i)*10-(/preview|exp/.test(i)?5:0)-(/latest/.test(i)?1:0);
+   cands=ids.sort((a,b)=>score(b)-score(a));prov='gemini'}
+  if(!cands.length)throw 0;model=cands[0];
   window._k=k;sessionStorage.setItem('k',k);$('keybox').style.display='none';$('mdl').textContent='· '+prov+' / '+model;
-  add('a','Connected. Model auto-selected: '+model)
+  add('a','Connected. Newest suitable model auto-selected: '+model+'. If it is unavailable I will fall back to the next one.')
  }catch(e){add('a','Key rejected. Check it is a valid Groq (gsk_…) or Gemini (AIza…) key.')}}
 function add(c,t){const d=document.createElement('div');d.className='m '+c;d.textContent=t;$('msgs').appendChild(d);$('msgs').scrollTop=1e9;return d}
+async function call(m,sys,msgs){
+ let r,j;
+ if(prov==='groq'){
+  r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+window._k},body:JSON.stringify({model:m,messages:[{role:'system',content:sys},...msgs.map(h=>({role:h.role,content:h.text}))]})});
+  j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);return j.choices[0].message.content}
+ r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${window._k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:msgs.map(h=>({role:h.role==='user'?'user':'model',parts:[{text:h.text}]}))})});
+ j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);return j.candidates[0].content.parts.map(p=>p.text||'').join('')}
+async function llm(sys,msgs){for(;;){try{return await call(model,sys,msgs)}catch(e){
+ if(/no longer|not found|decommission|not supported|deprecated|unavailable|quota|exhausted|404/i.test(e.message)&&cands.length>1){cands.shift();model=cands[0];$('mdl').textContent='· '+prov+' / '+model;continue}
+ throw e}}}
 async function send(e){
  e.preventDefault();const t=$('q').value.trim();if(!t)return;$('q').value='';add('u',t);
  if(!prov){add('a','Paste a free API key above first.');return}
- hist.push({role:'user',text:t});const d=add('a','…');
- try{let out;
-  if(prov==='groq'){
-   const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+window._k},body:JSON.stringify({model,messages:[{role:'system',content:SYS},...hist.map(h=>({role:h.role,content:h.text}))]})});
-   const j=await r.json();if(!r.ok)throw new Error(j.error?.message);out=j.choices[0].message.content}
-  else{
-   const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${window._k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:hist.map(h=>({role:h.role==='user'?'user':'model',parts:[{text:h.text}]}))})});
-   const j=await r.json();if(!r.ok)throw new Error(j.error?.message);out=j.candidates[0].content.parts.map(p=>p.text).join('')}
-  hist.push({role:'assistant',text:out});d.textContent=out
- }catch(err){hist.pop();d.textContent='Request failed: '+(err.message||'network error')}}
+ const d=add('a','Planning…'),tr=[],tool=/sand|rock|terrain|halt|entropy|latency|drive|briefing/i.test(t);
+ tr.push('Plan: retrieve'+(tool?' + read live safety demo':''));
+ const hits=retrieve(t,3);tr.push('Retrieve: '+hits.map(h=>h.id).join(', '));
+ const ctx=hits.map(h=>`[${h.id}] ${h.t}`).join('\n')+(tool?'\n[demo] Live safety demo state: '+$('log').textContent:'');
+ hist.push({role:'user',text:t});
+ try{const out=await llm(SYS+'\nAnswer using ONLY this context. If it does not cover the question, say so. Cite ids in brackets.\n'+ctx,hist);
+  hist.push({role:'assistant',text:out});tr.push('Generate: '+model);d.textContent=out+'\n\n▸ '+tr.join('\n▸ ')}
+ catch(err){hist.pop();d.textContent='Request failed: '+(err.message||'network error')}}
+// CNN feature lab
+function cnn(img){
+ const W=200,H=Math.max(16,Math.round(W*img.height/img.width)),ci=$('ci');ci.width=W;ci.height=H;const g=ci.getContext('2d');g.drawImage(img,0,0,W,H);
+ const d=g.getImageData(0,0,W,H).data,gr=new Float32Array(W*H);for(let i=0;i<W*H;i++)gr[i]=(d[4*i]*.3+d[4*i+1]*.59+d[4*i+2]*.11)/255;
+ const kx=[-1,0,1,-2,0,2,-1,0,1],ky=[-1,-2,-1,0,0,0,1,2,1],w=W-2,h=H-2,f=new Float32Array(w*h);let sum=0,mx=1e-6;
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){let a=0,b=0;for(let k=0;k<9;k++){const p=gr[(y+(k/3|0))*W+x+k%3];a+=kx[k]*p;b+=ky[k]*p}const m=Math.max(0,Math.hypot(a,b));f[y*w+x]=m;sum+=m;mx=Math.max(mx,m)}
+ const pw=w>>1,ph=h>>1,o=$('co');o.width=pw;o.height=ph;const og=o.getContext('2d'),od=og.createImageData(pw,ph);
+ for(let y=0;y<ph;y++)for(let x=0;x<pw;x++){const m=Math.max(f[2*y*w+2*x],f[2*y*w+2*x+1],f[(2*y+1)*w+2*x],f[(2*y+1)*w+2*x+1]),v=255*m/mx,i=4*(y*pw+x);od.data[i]=v;od.data[i+1]=v*.75;od.data[i+2]=v*.4;od.data[i+3]=255}
+ og.putImageData(od,0,0);const e=sum/(w*h),band=e<.08?'smooth, soil-like':e<.2?'mixed texture':'rough, rock or bedrock-like';
+ $('cr').textContent=`Mean edge energy ${e.toFixed(3)}: ${band}. Placeholder bands, not a trained classification.`}
+$('cf').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>cnn(im);im.src=URL.createObjectURL(f)};
+function sample(){const c=document.createElement('canvas');c.width=300;c.height=200;const g=c.getContext('2d');g.fillStyle='#b5714a';g.fillRect(0,0,300,200);
+ for(let i=0;i<2500;i++){g.fillStyle=`rgba(${90+Math.random()*80|0},${60+Math.random()*50|0},${40+Math.random()*30|0},.5)`;g.fillRect(Math.random()*300,Math.random()*200,2,2)}
+ for(let i=0;i<7;i++){g.fillStyle='#4a3a32';g.beginPath();g.ellipse(Math.random()*280+10,Math.random()*120+70,8+Math.random()*16,6+Math.random()*10,0,0,7);g.fill()}cnn(c)}
 document.querySelectorAll(".links a").forEach(a=>a.onclick=()=>a.parentNode.classList.remove("open"));
 function ask(b){$("q").value=b.textContent;send(new Event("submit"))}
 function openChat(){$('chat').classList.add('open');$('fab').style.display='none';const k=sessionStorage.getItem('k');if(k&&!prov){$('key').value=k;connect()}}
